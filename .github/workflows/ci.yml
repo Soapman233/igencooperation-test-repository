@@ -1,0 +1,43 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  atlas:
+    name: silent-failure-atlas
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: projects/silent-failure-atlas
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # 门禁本身必须能被反证触发。注入 5 类已知缺陷 + 1 个未突变模板，
+      # 断言校验器全部拒绝。这一条挂了说明门禁坏了，不是提交有问题。
+      - name: validator selftest
+        run: python tools/validate.py --selftest
+
+      - name: validate cases
+        run: python tools/validate.py
+
+      # 改了案例却没重生成统计，CI 必须红。
+      # 统计与实际不一致，比没有统计更危险。
+      - name: report must be up to date
+        run: |
+          python tools/report.py
+          if ! git diff --quiet -- REPORT.md; then
+            echo "::error file=projects/silent-failure-atlas/REPORT.md::REPORT.md 已过期。请在本地运行 python tools/report.py 并提交结果。"
+            git diff -- REPORT.md
+            exit 1
+          fi

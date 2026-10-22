@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/OWNER/silent-failure-atlas/schema/case.schema.json",
+  "title": "Silent Failure Case",
+  "description": "One reproducible case where an unattended system reports success while it did not actually verify anything. The case is defined by the gap between reported_verdict and expected_verdict.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "title",
+    "falsifies",
+    "trigger",
+    "observable",
+    "falsifier",
+    "reported_verdict",
+    "expected_verdict",
+    "reachability",
+    "domain",
+    "contributed_by"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^sf-[0-9]{4}$",
+      "description": "Stable slug. Must equal the filename stem."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 4,
+      "maxLength": 90,
+      "description": "One line, in the contributor's language. No trailing period."
+    },
+    "falsifies": {
+      "type": "string",
+      "minLength": 8,
+      "description": "The existing acceptance criterion this case overturns. Write it as the criterion, not as the bug. Example: 'empty result => nothing to report'."
+    },
+    "trigger": {
+      "type": "string",
+      "minLength": 10,
+      "description": "Preconditions that make the failure reachable. State the system state, not the fix."
+    },
+    "observable": {
+      "type": "string",
+      "minLength": 10,
+      "description": "What an operator actually sees. Include why it fails to raise suspicion."
+    },
+    "falsifier": {
+      "type": "string",
+      "minLength": 10,
+      "description": "A check that would turn green into red. Must be executable or at least decidable, and must state what result falsifies the criterion."
+    },
+    "reported_verdict": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 60,
+      "description": "What the system reports today. Free text because implementations differ: 'pass', 'exit 0', 'all green', 'no changes'."
+    },
+    "expected_verdict": {
+      "enum": ["fail", "unknown", "degraded", "blocked"],
+      "description": "What it should have reported. 'unknown' = evidence missing; 'degraded' = partial but usable; 'blocked' = never finished."
+    },
+    "reachability": {
+      "enum": ["production", "edge", "theoretical"],
+      "description": "Can a real production path hit this? 'theoretical' cases are still welcome but must be labelled, so hit rates are never aggregated across reachability classes."
+    },
+    "domain": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 40,
+      "description": "Short kebab-case tag. Suggested: unattended-loop, filesystem-write, ci-pipeline, document-pipeline, packaging, network-retry, state-machine, encoding."
+    },
+    "contributed_by": {
+      "type": "string",
+      "pattern": "^eigenflux#[A-Za-z0-9]{5}$",
+      "description": "Contributor handle. Use 'anonymous' if you prefer not to be credited."
+    },
+    "first_observed": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+      "description": "YYYY-MM-DD. Date the failure was first seen, not the date of submission."
+    },
+    "reference_anchor": {
+      "type": "string",
+      "description": "What the verdict is judged against: a manifest id, a source digest, a sentinel line, a golden file."
+    },
+    "normalization_version": {
+      "type": "string",
+      "description": "How inputs and outputs are normalized before comparison. Pin it; otherwise digests are not comparable across batches."
+    },
+    "repro": {
+      "type": "string",
+      "description": "Minimal steps or a short code sketch. No credentials, no private paths, no internal URLs."
+    },
+    "environment": {
+      "type": "string",
+      "description": "OS / runtime / version, only if the failure depends on it."
+    },
+    "related": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^sf-[0-9]{4}$" },
+      "uniqueItems": true
+    },
+    "notes": {
+      "type": "string",
+      "description": "Boundaries and known limits. Say what this case does NOT prove."
+    },
+    "status": {
+      "enum": ["draft", "reviewed", "disputed", "retired"],
+      "default": "draft",
+      "description": "draft = submitted, format-checked only. reviewed = reproduced by someone other than the contributor. disputed = a counterexample to the falsifier has been reported."
+    }
+  }
+}
