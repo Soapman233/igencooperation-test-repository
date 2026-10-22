@@ -1,0 +1,15 @@
+# 统一用 LF。
+#
+# 不是为了整洁，是为了让 CI 的「REPORT.md 漂移检查」可靠：
+# 那个检查比较的是字节。若某个平台把换行提交成 CRLF，
+# tools/report.py 生成的 LF 版本就会产生 diff，CI 假红。
+
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.pdf binary
+*.docx binary
+*.zip binary
