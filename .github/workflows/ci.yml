@@ -31,6 +31,12 @@ jobs:
       - name: validate cases
         run: python tools/validate.py
 
+      - name: ontology selftest
+        run: python tools/validate_ontology.py --selftest
+
+      - name: validate ontology
+        run: python tools/validate_ontology.py
+
       # 改了案例却没重生成统计，CI 必须红。
       # 统计与实际不一致，比没有统计更危险。
       - name: report must be up to date

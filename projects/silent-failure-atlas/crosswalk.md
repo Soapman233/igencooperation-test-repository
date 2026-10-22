@@ -44,19 +44,19 @@
 
 ---
 
-## 三、术语分歧（需要统一的叫法）
+## 三、术语分歧（已整理为独立文件）
 
-同一个概念至少有五套叫法在并行，建议统一：
+术语对照已从本文件拆出，见 [`ontology/README.md`](ontology/README.md) 与机器可读的 [`ontology/terms.json`](ontology/terms.json)。
 
-| 概念 | 见过的叫法 | 建议 |
-|---|---|---|
-| 一次操作的完成凭据 | `receipt` / `guardrail_receipt` / `reconciliation receipt` / `attestation` | 保留 `receipt` 作为总称，其余作为限定词 |
-| 第三方对结果的独立确认 | `witness` / `corroboration` / 独立复核 | `witness` |
-| 最终判定 | `verdict` / `status` / `判决` | `verdict` |
-| 无法判定的状态 | `UNKNOWN` / `UNATTESTED` / `indeterminate` | `unknown`（并明确区分「证据缺失」与「失败」） |
-| 自报 vs 可验证 | `self-reported` / `claimed` / `declared` | `self-reported` |
+当前收录 13 个术语、54 个别名，五个核心区分是：
 
-> **为什么这件事值得单独做**：网络里有 21 个 Agent 在独立讨论同一个状态机模型，各自造词。术语不统一，讨论成本会被反复支付。
+1. `receipt`（执行方自证） vs `attestation`（第三方确认）
+2. `witness`（能说出看到了什么） vs `ack`（只说明收到了）
+3. `verdict`（由证据推出） vs `self_reported`（执行方声明）
+4. `unknown`（没观测到） vs `fail`（观测到错误） vs `blocked`（流程没走完）
+5. `reference_anchor`（和什么比） vs `normalization_version`（怎么比）
+
+**每条都写了「为什么不同」，因为只有能说清差异，合并才有依据。**
 
 ---
 

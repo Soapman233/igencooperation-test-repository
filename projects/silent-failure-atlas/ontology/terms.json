@@ -1,0 +1,354 @@
+{
+  "schema_version": "ontology.v1",
+  "generated": "2026-10-22",
+  "note": "术语对照表。目的不是规定谁对谁错，而是让不同实现说同一件事时能被机器对上。aliases 收的是网络上实际出现过的叫法。",
+  "terms": [
+    {
+      "id": "receipt",
+      "tier": "core",
+      "label_zh": "回执",
+      "label_en": "receipt",
+      "definition": "由执行方在操作完成后主动签发的、可被外部检查的凭据，说明「做了什么、结果是什么」。",
+      "issuer": "执行方（first party）",
+      "aliases": [
+        "guardrail_receipt",
+        "reconciliation receipt",
+        "execution receipt",
+        "回执",
+        "收据",
+        "完成凭据"
+      ],
+      "required_fields": [
+        "subject（对什么操作签发）",
+        "verdict（结果）",
+        "issued_at（签发时间）",
+        "issuer（谁签发）",
+        "digest（内容摘要，用于防篡改）"
+      ],
+      "distinct_from": [
+        {
+          "term": "attestation",
+          "why": "回执由执行方自己签发，证明「我做了」；attestation 由第三方签发，证明「我确认」。执行方自报永远不能替代第三方确认。"
+        },
+        {
+          "term": "log",
+          "why": "日志是被动记录，可缺失、可截断、可被重放；回执是主动签发且必须可校验。日志不能当回执用。"
+        }
+      ],
+      "anti_patterns": [
+        "只记录「成功」不记录「对什么成功」——subject 缺失时回执无法被核对",
+        "回执里的数字由同一个进程算出并与操作共享内存视图——这不构成独立证据"
+      ]
+    },
+    {
+      "id": "attestation",
+      "tier": "core",
+      "label_zh": "第三方确认",
+      "label_en": "attestation",
+      "definition": "由不参与执行的一方签发的确认，说明「我独立检查过，结论是……」。",
+      "issuer": "第三方（second party，必须与执行方不同）",
+      "aliases": [
+        "attest",
+        "corroboration",
+        "independent verification",
+        "外部证据",
+        "第三方证明"
+      ],
+      "required_fields": [
+        "subject（确认什么）",
+        "verdict（确认结论）",
+        "attestor（谁确认，须与 issuer 不同）",
+        "method（用什么方法确认）",
+        "issued_at"
+      ],
+      "distinct_from": [
+        {
+          "term": "receipt",
+          "why": "回执是自证，attestation 是他证。把自证当成立即完成验证，是「校验者与被校验对象共用生命周期」的根源。"
+        },
+        {
+          "term": "witness",
+          "why": "witness 指独立观察这一角色或行为；attestation 指它产出的那份可检查的结论。"
+        }
+      ],
+      "anti_patterns": [
+        "attestor 与 issuer 是同一个进程 / 同一次运行 / 同一份内存视图",
+        "用「我读了日志」作为 method——日志本身不是独立路径"
+      ]
+    },
+    {
+      "id": "witness",
+      "tier": "core",
+      "label_zh": "见证",
+      "label_en": "witness",
+      "definition": "独立于执行路径的观察者或观察行为。它的价值不在结论，而在「它与执行路径不共享状态」。",
+      "issuer": "独立观察者",
+      "aliases": [
+        "witness model",
+        "independent observer",
+        "独立复核",
+        "见证方"
+      ],
+      "required_fields": [
+        "independence_basis（凭什么说它独立：不同进程 / 不同机器 / 不同连接 / 不同路径）"
+      ],
+      "distinct_from": [
+        {
+          "term": "attestation",
+          "why": "witness 是角色/行为，attestation 是产物。有 witness 不等于有 attestation——观察了但没签发可检查的结论，等于没观察。"
+        },
+        {
+          "term": "ack",
+          "why": "ack 是「收到」，witness 是「我看过并且能说出看到了什么」。ACK 不能升级成 witness。"
+        }
+      ],
+      "anti_patterns": [
+        "把同一进程内的二次读取当作 witness——共享内存视图就不是独立路径",
+        "把「对方回了 ACK」当作 witness"
+      ]
+    },
+    {
+      "id": "verdict",
+      "tier": "core",
+      "label_zh": "判定",
+      "label_en": "verdict",
+      "definition": "对一次操作结果的最终分类。必须来自证据，不能来自执行方的声明。",
+      "issuer": "校验方（可以是执行方，但那样就不是独立判定）",
+      "aliases": [
+        "status",
+        "判定结果",
+        "判决",
+        "state"
+      ],
+      "required_fields": [
+        "value（取值，见 enum）",
+        "evidence_ref（依据哪份回执 / 确认）",
+        "decided_at"
+      ],
+      "enum": ["pass", "fail", "unknown", "degraded", "blocked"],
+      "distinct_from": [
+        {
+          "term": "self_reported",
+          "why": "self_reported 是执行方声明；verdict 必须由证据推出。两者可以一致，但一致性本身需要被检查。"
+        }
+      ],
+      "anti_patterns": [
+        "只有 pass / fail 两值——把「证据不足」压进 fail 或 pass，都会丢失信息",
+        "verdict 由执行路径自己写，且没有任何外部证据引用"
+      ]
+    },
+    {
+      "id": "unknown",
+      "tier": "core",
+      "label_zh": "未知",
+      "label_en": "unknown",
+      "definition": "证据不足以判定的状态。它不是失败，也不是成功——它是「没有观测到」。",
+      "issuer": "校验方",
+      "aliases": [
+        "UNKNOWN",
+        "UNATTESTED",
+        "indeterminate",
+        "indeterminate_state",
+        "未知态"
+      ],
+      "required_fields": [
+        "reason（为什么判不了：缺证据 / 通道失效 / 超时 / 判据过期）",
+        "missing_evidence（缺的是哪一份证据）"
+      ],
+      "distinct_from": [
+        {
+          "term": "fail",
+          "why": "fail 是「观测到了错误」，unknown 是「没观测到」。把两者合并，会让「今天异常变少」看起来像系统变好了。"
+        },
+        {
+          "term": "blocked",
+          "why": "blocked 是「流程没走完」，unknown 是「走完了但判不了」。前者是调度问题，后者是证据问题。"
+        }
+      ],
+      "anti_patterns": [
+        "把 unknown 计入 pass 的分母——通过率会被虚高",
+        "把 unknown 计入 fail——会引发不必要的告警疲劳",
+        "把 unknown 静默丢弃——这是最坏的一种，等于把「没观测」伪装成「没问题」"
+      ]
+    },
+    {
+      "id": "silent_failure",
+      "tier": "supporting",
+      "label_zh": "静默失败",
+      "label_en": "silent failure",
+      "definition": "系统报告成功，但实际没有验证到任何东西。定义性的特征是：它不引起怀疑。",
+      "issuer": "—",
+      "aliases": [
+        "silent-failure",
+        "安静失效",
+        "假绿",
+        "all-green-but-inactive",
+        "false pass"
+      ],
+      "required_fields": [
+        "reported_verdict（系统说的）",
+        "expected_verdict（实际该说的）"
+      ],
+      "distinct_from": [
+        {
+          "term": "fail",
+          "why": "fail 会被发现；静默失败的定义就是不引起怀疑。前者是 bug，后者是观测体系的漏洞。"
+        }
+      ],
+      "anti_patterns": [
+        "把「报错但被忽略」也算静默失败——那是有信号但没人看，与「没有信号」是两类问题"
+      ]
+    },
+    {
+      "id": "falsifier",
+      "tier": "supporting",
+      "label_zh": "可证伪判据",
+      "label_en": "falsifier",
+      "definition": "一条能把结论从绿变红的检查。必须可执行或至少可判定，并说明什么结果会证伪它。",
+      "issuer": "—",
+      "aliases": ["falsifiable criterion", "证伪判据", "可证伪条件"],
+      "required_fields": [
+        "check（怎么查）",
+        "falsifying_result（什么结果算证伪）"
+      ],
+      "distinct_from": [
+        {
+          "term": "verdict",
+          "why": "falsifier 是判据（规则），verdict 是判定（结果）。判据必须先于判定存在。"
+        }
+      ],
+      "anti_patterns": [
+        "写成「多加注意」「建议复核」——不可判定",
+        "判据与它要检查的对象共享同一生命周期——判据会跟着一起失效"
+      ]
+    },
+    {
+      "id": "reference_anchor",
+      "tier": "supporting",
+      "label_zh": "判决参照物",
+      "label_en": "reference anchor",
+      "definition": "判定所相对的那个东西：manifest id、源摘要、哨兵行、金标准文件。没有参照物，判决没有意义。",
+      "issuer": "—",
+      "aliases": ["anchor", "参照系", "判决基准"],
+      "required_fields": ["type", "value"],
+      "distinct_from": [
+        {
+          "term": "verdict",
+          "why": "参照物是被比对的对象，判决是比对的结果。参照物本身被动过手脚时，判决会「自洽地错」。"
+        }
+      ],
+      "anti_patterns": [
+        "参照物与产物内联在同一张表里——「主表漏登」与「参照物漏登」变成同一个错误源，差集失去意义"
+      ]
+    },
+    {
+      "id": "normalization_version",
+      "tier": "supporting",
+      "label_zh": "归一化版本",
+      "label_en": "normalization version",
+      "definition": "比对前对输入与输出做的规范化方式及其版本。不钉版本，跨批次摘要不可比。",
+      "issuer": "—",
+      "aliases": ["normalizer version", "归一化器版本", "canonicalization version"],
+      "required_fields": ["version", "scope（归一化了哪些方面）"],
+      "distinct_from": [
+        {
+          "term": "reference_anchor",
+          "why": "归一化决定「怎么比」，参照物决定「和什么比」。两者都会导致摘要变化，但原因不同——混在一起就无法归因。"
+        }
+      ],
+      "anti_patterns": [
+        "改了归一化规则却不记版本——之后所有摘要变化都无法区分是内容变了还是规则变了",
+        "归一化里含单个尾换行等不可见差异——同一内容会产出不同摘要"
+      ]
+    },
+    {
+      "id": "reachability",
+      "tier": "supporting",
+      "label_zh": "可达性",
+      "label_en": "reachability",
+      "definition": "一个诱饵或负样本能否被生产路径实际走到。它决定命中率能不能被解释。",
+      "issuer": "—",
+      "aliases": ["reachable", "可达", "可触达性"],
+      "required_fields": ["value"],
+      "enum": ["production", "edge", "theoretical"],
+      "distinct_from": [
+        {
+          "term": "verdict",
+          "why": "可达性描述测试集的覆盖范围，判定描述检测器的输出。把不可达样本的「未命中」算进检测器失败，是归因错误。"
+        }
+      ],
+      "anti_patterns": [
+        "把同分布与跨场景的命中率汇总成一个数——两者检测的不是同一个构念",
+        "不标注可达性就公布通过率——读者会把不同尺子的刻度当成同一把尺子"
+      ]
+    },
+    {
+      "id": "log",
+      "tier": "supporting",
+      "label_zh": "日志",
+      "label_en": "log",
+      "definition": "执行过程中被动留下的记录。可以缺失、可以截断、可以被重放——所以它不能单独作为「操作已完成」的证据。",
+      "issuer": "执行方",
+      "aliases": ["logs", "日志行", "运行日志"],
+      "required_fields": ["timestamp", "level", "message"],
+      "distinct_from": [
+        {
+          "term": "receipt",
+          "why": "日志是被动记录，回执是主动签发。日志里写「已处理 3 项」不构成回执——它没有 subject，也没有可校验的摘要。"
+        }
+      ],
+      "anti_patterns": [
+        "把「日志里没有错误」当成「没有错误」——没写日志与没出错同形",
+        "日志被截断后仍被当作完整证据"
+      ]
+    },
+    {
+      "id": "ack",
+      "tier": "supporting",
+      "label_zh": "收到确认",
+      "label_en": "ack",
+      "definition": "接收方表示「已收到」的信号。它证明传输发生过，不证明内容被理解、被校验或被处理。",
+      "issuer": "接收方",
+      "aliases": ["acknowledgement", "ACK", "收到回执", "确认收到"],
+      "required_fields": ["ref（确认的是哪一条）", "acked_at"],
+      "distinct_from": [
+        {
+          "term": "witness",
+          "why": "ACK 只说明收到了；witness 要求能说出看到了什么。ACK 不能升级成见证。"
+        },
+        {
+          "term": "verdict",
+          "why": "ACK 是传输层信号，判定是证据层结论。把 ACK 当判定，会让「已投递」冒充「已成功」。"
+        }
+      ],
+      "anti_patterns": [
+        "用 ACK 数量统计成功率——投递成功与处理成功是两件事",
+        "ACK 不带 ref——无法判断确认的是哪一条，重放时会串味"
+      ]
+    },
+    {
+      "id": "self_reported",
+      "tier": "supporting",
+      "label_zh": "自报状态",
+      "label_en": "self-reported status",
+      "definition": "由执行方自己声明、没有外部证据支撑的状态。它是回执的输入，不是判定的依据。",
+      "issuer": "执行方",
+      "aliases": ["self-reported", "self_report", "claimed", "declared", "自报", "自称完成"],
+      "required_fields": ["claim", "claimed_by"],
+      "distinct_from": [
+        {
+          "term": "verdict",
+          "why": "自报是「我说我做完了」，判定是「有证据说明做完了」。把自报当判定，会系统性地高估完成率。"
+        },
+        {
+          "term": "attestation",
+          "why": "自报的执行方与声明方是同一个；attestation 要求两者不同。"
+        }
+      ],
+      "anti_patterns": [
+        "用自报完成率评估流水线——有实测显示换成可验证回执后，完成率会明显下降，差出来的部分正是静默跳过",
+        "自报与判定混用同一字段——事后无法区分哪些数是测出来的、哪些是声称的"
+      ]
+    }
+  ]
+}

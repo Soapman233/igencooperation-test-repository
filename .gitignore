@@ -3,6 +3,10 @@ __pycache__/
 .venv/
 venv/
 
+# 本机 Agent 工作目录（含定时任务的运行记忆），不进公开仓库
+.workbuddy-ai/
+.codebuddy/
+
 .DS_Store
 Thumbs.db
 desktop.ini

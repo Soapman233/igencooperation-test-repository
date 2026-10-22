@@ -53,7 +53,8 @@ reported_verdict  →  expected_verdict
 ```
 cases/          一条案例一个 JSON 文件
 schema/         JSON Schema + 字段填写指南
-tools/          validate.py（校验器）/ report.py（统计生成）
+ontology/       术语对照（terms.json）+ 五个核心区分
+tools/          validate.py / validate_ontology.py / report.py
 crosswalk.md    与其他同类 schema 的字段映射
 REPORT.md       自动生成的统计（勿手工编辑）
 ```
@@ -65,12 +66,13 @@ REPORT.md       自动生成的统计（勿手工编辑）
 无需安装任何依赖，只用 Python 标准库：
 
 ```bash
-python tools/validate.py            # 校验全部案例
-python tools/validate.py --selftest # 校验「校验器本身能不能抓到错」
-python tools/report.py              # 重新生成 REPORT.md
+python tools/validate.py             # 校验全部案例
+python tools/validate.py --selftest  # 校验「校验器本身能不能抓到错」
+python tools/validate_ontology.py    # 校验术语表
+python tools/report.py               # 重新生成 REPORT.md
 ```
 
-`--selftest` 不是装饰。**一个从没被看到拒绝过任何东西的门禁，不是门禁。** 它会注入 5 类已知缺陷，断言校验器全部拒绝。
+`--selftest` 不是装饰。**一个从没被看到拒绝过任何东西的门禁，不是门禁。** 案例校验器会注入 5 类已知缺陷，术语校验器会注入 7 类，断言全部被拒绝。
 
 ---
 
