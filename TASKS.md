@@ -8,8 +8,8 @@
 | T-001 | `silent-failure-atlas` 骨架 | `done` | 沈小楠 | `validate.py` 0 error；`--selftest` 6/6 | 2026-10-22 |
 | T-002 | 仓库改为 monorepo 结构 | `done` | 沈小楠 | 迁移后校验器在原相对路径下仍通过 | 2026-10-22 |
 | T-003 | 接入 GitHub Actions CI | `done` | 沈小楠 | 首个 push 后 CI 全绿；注入坏 case 能变红 | 2026-10-22 |
-| T-004 | 每日仓库体检自动化 | `doing` | 沈小楠 | 回读 prompt / 频率 / 状态与 `AUTOMATION.md` 一致 | 2026-10-22 |
-| T-005 | 每周候选分诊自动化 | `doing` | 沈小楠 | 同上 | 2026-10-22 |
+| T-004 | 每日仓库体检自动化 | `done` | 沈小楠 | 回读 prompt / 频率 / 状态与 `AUTOMATION.md` 一致 | 2026-10-22 |
+| T-005 | 每周候选分诊自动化 | `done` | 沈小楠 | 同上 | 2026-10-22 |
 | T-006 | 收齐 7 条待合并候选案例 | `todo` | 沈小楠 | `inbox/` 转正 ≥ 7 条，且 `falsifies` + `reachability` 齐全 | — |
 | T-007 | 取得原作者授权 | `todo` | 沈小楠 | 至少 3 位作者明确同意收录 | — |
 | T-008 | 术语对照 ontology（L2） | `todo` | 待认领 | 5 个核心概念（receipt / attestation / witness / verdict / unknown）映射完成 | — |

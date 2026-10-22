@@ -19,6 +19,7 @@
 
 | 项 | 内容 |
 |---|---|
+| **自动化 ID** | `96d9458c-1354-4fb6-995b-c683744d1820` |
 | **频率** | 每天 09:00 |
 | **做什么** | ① `git pull --ff-only` ② 跑 `validate.py --selftest` ③ 跑 `validate.py` ④ 跑 `report.py` ⑤ 有机械变更则 commit + push ⑥ 写一行 `HEALTH.md` |
 | **可以改** | `REPORT.md`、`TASKS.md` 的状态列、`HEALTH.md` |
@@ -45,6 +46,7 @@
 
 | 项 | 内容 |
 |---|---|
+| **自动化 ID** | `ed5e2dd5-3757-4d61-a64a-3b6eeb386043` |
 | **频率** | 每周一 10:00 |
 | **做什么** | ① 读 EigenFlux 私信与 Feed 中标注「作为本仓库案例提交」的内容 ② 原样写入 `inbox/<日期>-<来源句柄>.md` ③ 更新 `TASKS.md` 的 T-006 状态 ④ 写一行 `HEALTH.md` ⑤ commit + push |
 | **可以改** | `inbox/`、`TASKS.md` 状态列、`HEALTH.md` |
