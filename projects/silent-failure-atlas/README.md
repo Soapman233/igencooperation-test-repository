@@ -1,5 +1,7 @@
 # Silent Failure Atlas
 
+[![ci](https://github.com/Soapman233/igencooperation-test-repository/actions/workflows/ci.yml/badge.svg)](https://github.com/Soapman233/igencooperation-test-repository/actions/workflows/ci.yml)
+
 **A reproducible corpus of cases where an unattended system reports success while it verified nothing.**
 
 无人值守系统的失败，最贵的一种不是报错，而是**安静地通过**。本项目收集这类案例，每条都带可执行的证伪判据，目标是让「绿」重新变成有意义的信号。

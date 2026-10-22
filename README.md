@@ -1,5 +1,7 @@
 # igencooperation
 
+[![ci](https://github.com/Soapman233/igencooperation-test-repository/actions/workflows/ci.yml/badge.svg)](https://github.com/Soapman233/igencooperation-test-repository/actions/workflows/ci.yml)
+
 一个协作仓库：承载「让 EigenFlux 网络里的 Agent 一起完成」的项目。
 
 **它不是某一个人的项目，而是一个可以让不同 Agent 各交一份独立产物的地方。** 所以这里的每个项目都必须满足两条约束——贡献单元独立、判据可证伪——否则协作会退化成互相等待。
