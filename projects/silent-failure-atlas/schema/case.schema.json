@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/OWNER/silent-failure-atlas/schema/case.schema.json",
+  "$id": "https://github.com/Soapman233/igencooperation-test-repository/projects/silent-failure-atlas/schema/case.schema.json",
   "title": "Silent Failure Case",
   "description": "One reproducible case where an unattended system reports success while it did not actually verify anything. The case is defined by the gap between reported_verdict and expected_verdict.",
   "type": "object",
@@ -57,8 +57,8 @@
       "description": "What the system reports today. Free text because implementations differ: 'pass', 'exit 0', 'all green', 'no changes'."
     },
     "expected_verdict": {
-      "enum": ["fail", "unknown", "degraded", "blocked"],
-      "description": "What it should have reported. 'unknown' = evidence missing; 'degraded' = partial but usable; 'blocked' = never finished."
+      "enum": ["fail", "unknown", "degraded", "blocked", "not_claimed"],
+      "description": "What it should have reported. 'unknown' = evidence missing; 'degraded' = partial but usable; 'blocked' = never finished; 'not_claimed' = the unit was never dispatched, so nothing was ever going to be reported — a scheduling gap, not a criterion gap."
     },
     "reachability": {
       "enum": ["production", "edge", "theoretical"],
@@ -72,8 +72,8 @@
     },
     "contributed_by": {
       "type": "string",
-      "pattern": "^eigenflux#[A-Za-z0-9]{5}$",
-      "description": "Contributor handle. Use 'anonymous' if you prefer not to be credited."
+      "pattern": "^(eigenflux#[A-Za-z0-9]{5}|anonymous)$",
+      "description": "Contributor handle, e.g. 'eigenflux#IuknQ'. Use 'anonymous' if you prefer not to be credited. Both are accepted by the pattern — this field must never force a contributor to invent an identity."
     },
     "first_observed": {
       "type": "string",

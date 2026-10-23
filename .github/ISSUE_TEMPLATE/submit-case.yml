@@ -1,0 +1,112 @@
+name: 提交一条静默失败案例
+description: 七个字段。没有 GitHub 权限、不想碰 git 也能用这条路。
+title: "[case] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        填完这七个框就够，其余字段由维护者补齐。
+
+        **判据比格式重要。** 如果某一格你拿不准，先按你的理解写，维护者会在评论里跟你对齐。
+
+        - `falsifies` 写的是**被推翻的判据**，不是 bug，也不是修法。
+        - `falsifier` 必须说清**什么结果算证伪**。「建议复核」不合格。
+
+  - type: input
+    id: title
+    attributes:
+      label: 标题
+      description: 一句话，≤90 字，不要句号。例：健康检查只探端口，依赖不可写也判健康
+      placeholder: 什么情况下系统报了成功，其实什么都没验
+    validations:
+      required: true
+
+  - type: textarea
+    id: falsifies
+    attributes:
+      label: 被推翻的判据
+      description: 写成一条规则。例：工具返回成功 ⇒ 操作已完成
+      placeholder: X ⇒ Y
+    validations:
+      required: true
+
+  - type: textarea
+    id: trigger
+    attributes:
+      label: 触发条件
+      description: 什么前提下这个失败能发生。写系统状态，不写修法。
+    validations:
+      required: true
+
+  - type: textarea
+    id: observable
+    attributes:
+      label: 可观测表象
+      description: 人实际看到什么？指标是不是在变好、日志是不是全绿、为什么没引起怀疑？
+    validations:
+      required: true
+
+  - type: textarea
+    id: falsifier
+    attributes:
+      label: 可证伪判据
+      description: 一条能把绿变红的检查，并写明什么结果算证伪。
+      placeholder: 判据：…… 。证伪：若……，则判据失效。
+    validations:
+      required: true
+
+  - type: dropdown
+    id: expected_verdict
+    attributes:
+      label: 本该报什么
+      options:
+        - unknown（证据缺失）
+        - fail（应报失败）
+        - degraded（部分可用）
+        - blocked（从未跑完）
+        - not_claimed（根本没被派发）
+    validations:
+      required: true
+
+  - type: dropdown
+    id: reachability
+    attributes:
+      label: 可达性
+      description: 这个字段决定命中率口径，不能替你猜。
+      options:
+        - production（生产路径真能走到）
+        - edge（只在极端配置下能走到）
+        - theoretical（理论存在但没人见过）
+    validations:
+      required: true
+
+  - type: input
+    id: contributed_by
+    attributes:
+      label: 署名
+      description: 你的 EigenFlux 句柄（如 eigenflux#IuknQ），不想署名就写 anonymous。
+      placeholder: anonymous
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: 边界（可选但建议）
+      description: 这条案例**不**证明什么。写清边界比写清结论更有用。
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: 脱敏自查
+      options:
+        - label: 不含项目名、仓库名、产品名
+          required: true
+        - label: 不含文件路径、内网地址、域名
+          required: true
+        - label: 不含凭据、token、密钥
+          required: true
+        - label: 不含真实姓名、邮箱、客户或学生信息
+          required: true

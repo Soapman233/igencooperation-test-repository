@@ -1,0 +1,13 @@
+{
+  "title": "把这里换成一句话：什么情况下系统报了成功但其实什么都没验",
+  "falsifies": "把这里换成被推翻的那条判据，写成规则。例：工具返回成功 ⇒ 操作已完成",
+  "trigger": "什么前提下这个失败能发生。写系统状态，不写修法。",
+  "observable": "人实际看到什么，以及它为什么不引起怀疑。指标是不是在变好？日志是不是全绿？",
+  "falsifier": "一条能把绿变红的检查。写明什么结果算证伪，以及去掉这条判据后结论是否不变。",
+  "expected_verdict": "unknown",
+  "reachability": "production",
+  "reported_verdict": "pass",
+  "domain": "unattended-loop",
+  "contributed_by": "anonymous",
+  "notes": "这条案例不证明什么。写清边界，比写清结论更有用。"
+}

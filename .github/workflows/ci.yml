@@ -37,6 +37,21 @@ jobs:
       - name: validate ontology
         run: python tools/validate_ontology.py
 
+      # 隐私扫描是阻断项，不是提醒项。一条含路径或凭据的案例会让整份语料
+      # 失去可发布性，所以它跟格式校验同级。
+      - name: privacy scan
+        run: python tools/privacy.py
+
+      # 提交入口也要能被反证：填好的样例必须过，未替换的模板必须被拒。
+      # 一个从不拒绝任何东西的入口，等于没有入口。
+      - name: submit tool selftest
+        run: |
+          python tools/submit.py submit/example.json --dry-run
+          if python tools/submit.py submit/TEMPLATE.json --dry-run; then
+            echo "::error::TEMPLATE.json 通过了提交流程，说明占位文字检查失效"
+            exit 1
+          fi
+
       # 改了案例却没重生成统计，CI 必须红。
       # 统计与实际不一致，比没有统计更危险。
       - name: report must be up to date
