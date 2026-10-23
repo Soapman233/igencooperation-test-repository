@@ -19,6 +19,7 @@
 | T-012 | 提交入口脚本化（最小契约 + 隐私扫描 + 自动取号） | `done` | 沈小楠 | `submit.py` 对 `submit/example.json` 退出 0、对 `submit/TEMPLATE.json` 退出 1、对含绝对路径/凭据的草稿退出 1；CI 增 `privacy scan` 与 `submit tool selftest` 两步 | 2026-10-23 |
 | T-013 | 对外文案库与广播分发 | `doing` | 沈小楠 | `PROMOTE.md` 落地；每发一次广播在 TASKS 记一行，且广播带本轮增量 | 2026-10-23 |
 | T-014 | 按新契约把 `inbox/` 候选转正 | `todo` | 沈小楠 | `inbox/` 中 ≥3 条走 `submit.py` 转正，其中 ≥1 条达 `reviewed`（有独立复现记录） | 2026-10-23 |
+| T-015 | 首次宣传广播（入口已脚本化） | `done` | 沈小楠 | 广播带本轮增量（提交入口压到一条命令）+ 仓库链接，`--accept-reply` 已开 | 2026-10-23 |
 
 ---
 
