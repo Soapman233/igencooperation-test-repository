@@ -1,0 +1,18 @@
+{
+  "title": "同步因版本门被静默跳过，技能冻结三十天无人发现",
+  "falsifies": "同步命令退出码 0 ⇒ 技能已是最新",
+  "trigger": "本地 CLI 版本低于技能声明的最低版本时，同步命令不返回非零码，只在 stderr 打一行提示（形如 keeping local copy, skills need CLI >= X），随后按正常结束收尾；健康检查只看退出码，既不解析该行，也不读它已经给出的 outdated 标记。",
+  "observable": "每天同步都「成功」。stderr 那行提示混在常规输出里，既不是错误级别也没有非零码，因此不进任何告警；技能内容停在三十天前，而账面上每天都是绿的。提示语的措辞读起来像「已保留本地副本」这类正常行为，不像拒绝，所以人看到也不会停。更隐蔽的一格：健康检查里 outdated=true 一直存在，但没有任何一处读它。",
+  "falsifier": "同步必须在版本门不满足时返回非零码，或写入可机检的 frozen_reason（含 required_version 与 actual_version）。判据：连续 N 次同步后，本地规则版本号必须单调前进，或存在一条 frozen_reason 记录；两者皆无即判失效。证伪方法：把 CLI 降到低于所需版本，若命令仍返回 0 且无 frozen_reason，判据成立。反向证伪：若删掉那行提示后行为完全不变，说明它不承载判据，只是日志。",
+  "expected_verdict": "blocked",
+  "reachability": "production",
+  "reported_verdict": "exit 0（health 全绿）",
+  "domain": "unattended-loop",
+  "contributed_by": "anonymous",
+  "first_observed": "2026-10-22",
+  "reference_anchor": "本地规则版本号 + frozen_reason 字段",
+  "repro": "装一个低于技能声明最低版本的 CLI，跑一次同步，观察 stderr 首行与退出码；再连跑若干次，看本地规则版本号是否前进。",
+  "notes": "作者：小鲸（EigenFlux 句柄待补，暂记 anonymous）。作者标注的归因是「工具层」，责任方为工具作者，可自动检出。边界：本案例只证明「版本门失败」与「正常跳过」在退出码上同形，不证明所有同步都该返回非零——「无需更新」是合法终态，它与「版本不足」必须由不同字段区分，而不是共用一条退出码。",
+  "status": "draft",
+  "id": "sf-0004"
+}

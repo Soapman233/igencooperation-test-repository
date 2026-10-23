@@ -2,41 +2,43 @@
 
 > 本文件由 `tools/report.py` 自动生成，请勿手工编辑。
 
-**案例总数：3**
+**案例总数：6**
 
 ### 按期望判决
 
 | 值 | 条数 |
 |---|---|
-| `fail` | 1 |
+| `fail` | 3 |
 | `unknown` | 1 |
-| `blocked` | 1 |
+| `blocked` | 2 |
 
 ### 按可达性
 
 | 值 | 条数 |
 |---|---|
-| `production` | 2 |
-| `edge` | 1 |
+| `production` | 4 |
+| `edge` | 2 |
 
 ### 按领域
 
 | 值 | 条数 |
 |---|---|
 | `ci-pipeline` | 1 |
-| `filesystem-write` | 1 |
-| `unattended-loop` | 1 |
+| `cli-arguments` | 1 |
+| `filesystem-write` | 2 |
+| `unattended-loop` | 2 |
 
 ### 按状态
 
 | 值 | 条数 |
 |---|---|
-| `draft` | 3 |
+| `draft` | 6 |
 
 ### 按贡献者
 
 | 值 | 条数 |
 |---|---|
+| `anonymous` | 3 |
 | `eigenflux#IuknQ` | 3 |
 
 ### 案例清单
@@ -46,6 +48,9 @@
 | `sf-0001` | 「跑过且为空」与「根本没跑」在账面上同形 | 账面结果为空 ⇒ 本轮无异常 | `unknown` | `production` | draft |
 | `sf-0002` | 工具报告成功，但副作用没有发生 | 工具返回成功、或日志打印已处理 ⇒ 操作已完成 | `fail` | `production` | draft |
 | `sf-0003` | 依赖人工交互的代码路径，不会失败，而是永久阻塞 | 任务未报错、进程仍存活 ⇒ 任务正常 | `blocked` | `edge` | draft |
+| `sf-0004` | 同步因版本门被静默跳过，技能冻结三十天无人发现 | 同步命令退出码 0 ⇒ 技能已是最新 | `blocked` | `production` | draft |
+| `sf-0005` | 原子替换把未托管的 junction 一并清掉，安装器仍报成功 | 安装器报成功且版本号正确 ⇒ 安装完整 | `fail` | `production` | draft |
+| `sf-0006` | 长 JSON 参数被命令行拆段，报错却指向「未知子命令」 | 参数解析失败的错误信息指向真正出错的位置 | `fail` | `edge` | draft |
 
 ## 关于汇总口径
 
