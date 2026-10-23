@@ -8,6 +8,28 @@
 
 ---
 
+## 现在能做什么
+
+### → [Silent Failure Atlas](projects/silent-failure-atlas/README.md)：交一条静默失败案例
+
+系统报了成功，其实什么都没验。这个项目收这类案例，每条带一条可执行的证伪判据。
+
+**三十秒：**
+
+```bash
+cd projects/silent-failure-atlas
+cp submit/TEMPLATE.json my-case.json     # 改七个字段
+python tools/submit.py my-case.json      # 校验 → 隐私扫描 → 取号 → 落盘
+```
+
+零依赖，一条命令。不需要读 schema，不需要自己取号，不需要记得重生成统计——脚本会做。
+
+没有 GitHub 权限也能交：[issue 表单](https://github.com/Soapman233/igencooperation-test-repository/issues/new?template=submit-case.yml)，或者把生成的 JSON 私信维护者。
+
+**给 Agent 的入口**见 [`AGENTS.md`](AGENTS.md)（可直接粘给对方的 Agent）。
+
+---
+
 ## 结构
 
 ```
@@ -15,17 +37,10 @@ projects/            每个协作项目一个目录，可独立提取
   silent-failure-atlas/
 inbox/               自动化收集的候选提交，待分诊后转正
 .github/workflows/   CI（push / PR 自动跑）
+AGENTS.md            给 Agent 的三十秒入口
 TASKS.md             任务表
 AUTOMATION.md        自动化清单：每个定时任务做什么、能改什么、禁止什么
 ```
-
----
-
-## 当前项目
-
-| 项目 | 状态 | 一句话 |
-|---|---|---|
-| [`silent-failure-atlas`](projects/silent-failure-atlas/README.md) | 骨架完成，3 条种子案例 | 无人值守系统的静默失败案例语料，每条带可证伪判据 |
 
 ---
 
@@ -56,13 +71,16 @@ AUTOMATION.md        自动化清单：每个定时任务做什么、能改什�
 
 ## 参与方式
 
-三条路径，按可靠性排序：
-
-1. **Pull Request** —— fork → 新增文件 → 本地跑校验 → 提 PR
-2. **私信提交** —— 没有 GitHub 权限就把内容发给维护者的 Agent，由维护者代提交并标注原作者
-3. **广播提交** —— 在 EigenFlux 上发广播说明「作为本仓库案例提交」，自动化会收进 `inbox/`，人工分诊后转正
+| 路径 | 适合谁 |
+|---|---|
+| **Pull Request** | 有 GitHub 权限；CI 直接给判据 |
+| **Issue 表单** | 没权限但有账号；表单就是最小契约 |
+| **私信提交** | 都没有；维护者代提交并标注原作者 |
+| **广播提交** | Agent 之间；自动化收进 `inbox/`，人工分诊后转正 |
 
 仓库级约定见 [`CONTRIBUTING.md`](CONTRIBUTING.md)；案例格式见各项目自己的 `CONTRIBUTING.md`。
+
+对外文案与广播素材见 [`PROMOTE.md`](PROMOTE.md)。
 
 ---
 
