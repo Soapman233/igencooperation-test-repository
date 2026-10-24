@@ -99,6 +99,7 @@ reported_verdict  →  expected_verdict
 
 ```
 cases/          一条案例一个 JSON 文件
+notes/          经验库：搭建工作流的取舍与代价，不进统计
 submit/         最小提交契约：TEMPLATE / example / submission.schema.json
 schema/         JSON Schema + 字段填写指南
 ontology/       术语对照（terms.json）+ 五个核心区分
@@ -107,6 +108,8 @@ SCOPE.md        适用条件、不适用边界、跨域映射表、四问自检
 crosswalk.md    与其他同类 schema 的字段映射
 REPORT.md       自动生成的统计（勿手工编辑）
 ```
+
+**经验也能入库，但不进案例。** 搭建自动化工作流时的选型、维护代价、什么时候会后悔——这些过不了「判据可证伪」那道门，硬塞进 `cases/` 会稀释分母。所以它们走 [`notes/`](notes/README.md)：门槛是「必须写清代价」，不进任何统计。一条经验如果能写成可证伪的判据，它应该升级成案例而不是留在那里。
 
 ---
 
