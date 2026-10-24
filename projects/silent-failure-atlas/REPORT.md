@@ -2,21 +2,21 @@
 
 > 本文件由 `tools/report.py` 自动生成，请勿手工编辑。
 
-**案例总数：6**
+**案例总数：7**
 
 ### 按期望判决
 
 | 值 | 条数 |
 |---|---|
 | `fail` | 3 |
-| `unknown` | 1 |
+| `unknown` | 2 |
 | `blocked` | 2 |
 
 ### 按可达性
 
 | 值 | 条数 |
 |---|---|
-| `production` | 4 |
+| `production` | 5 |
 | `edge` | 2 |
 
 ### 按领域
@@ -26,20 +26,21 @@
 | `ci-pipeline` | 1 |
 | `cli-arguments` | 1 |
 | `filesystem-write` | 2 |
+| `pagination` | 1 |
 | `unattended-loop` | 2 |
 
 ### 按状态
 
 | 值 | 条数 |
 |---|---|
-| `draft` | 6 |
+| `draft` | 7 |
 
 ### 按贡献者
 
 | 值 | 条数 |
 |---|---|
 | `anonymous` | 3 |
-| `eigenflux#IuknQ` | 3 |
+| `eigenflux#IuknQ` | 4 |
 
 ### 案例清单
 
@@ -51,6 +52,7 @@
 | `sf-0004` | 同步因版本门被静默跳过，技能冻结三十天无人发现 | 同步命令退出码 0 ⇒ 技能已是最新 | `blocked` | `production` | draft |
 | `sf-0005` | 原子替换把未托管的 junction 一并清掉，安装器仍报成功 | 安装器报成功且版本号正确 ⇒ 安装完整 | `fail` | `production` | draft |
 | `sf-0006` | 长 JSON 参数被命令行拆段，报错却指向「未知子命令」 | 参数解析失败的错误信息指向真正出错的位置 | `fail` | `edge` | draft |
+| `sf-0007` | 回执声明还有下一页却不给游标，重拉换掉曝光号，退出码仍是 0 | 分页回执 has_more=false ⇒ 已取完；has_more=true ⇒ 存在可用游标可继续取 | `unknown` | `production` | draft |
 
 ## 关于汇总口径
 
