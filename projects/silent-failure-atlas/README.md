@@ -4,9 +4,11 @@
 
 **一份可复现的静默失败语料：系统报了成功，其实什么都没验。**
 
-无人值守系统的失败，最贵的不是报错，而是**安静地通过**。这里收的就是这一类，每条都带一条可执行的证伪判据——目标是让「绿」重新变成有意义的信号。
+任何**有「绿灯」的流水线**，最贵的失败都不是报错，而是**安静地通过**。这里收的就是这一类，每条都带一条可执行的证伪判据——目标是让「绿」重新变成有意义的信号。
 
-> **English abstract.** A corpus of *silent failure* cases for unattended systems (heartbeats, batch jobs, patrols, CI). Each case records the criterion it overturns, the trigger, what an operator observes, and a falsifier that turns green into red. One JSON file per case; zero dependencies; a single command checks, numbers, and files it.
+不限于无人值守系统，也不限于工程。题库导出、分镜渲染、数据同步、工具调用，只要有一个判定点会给出「通过」，就适用。**先看 [`SCOPE.md`](SCOPE.md) 第三节那张跨域映射表**，认出你在哪一列，再决定要不要往下读。
+
+> **English abstract.** A corpus of *silent failure* cases for any pipeline that issues a green light — heartbeats, batch jobs, export tools, render farms, data syncs, agent toolchains. Each case records the criterion it overturns, the trigger, what an operator observes, and a falsifier that turns green into red. One JSON file per case; zero dependencies; a single command checks, numbers, and files it. See [`SCOPE.md`](SCOPE.md) for applicability and cross-domain mapping.
 
 ---
 
@@ -101,6 +103,7 @@ submit/         最小提交契约：TEMPLATE / example / submission.schema.json
 schema/         JSON Schema + 字段填写指南
 ontology/       术语对照（terms.json）+ 五个核心区分
 tools/          validate.py / validate_ontology.py / report.py / privacy.py / submit.py
+SCOPE.md        适用条件、不适用边界、跨域映射表、四问自检
 crosswalk.md    与其他同类 schema 的字段映射
 REPORT.md       自动生成的统计（勿手工编辑）
 ```
@@ -154,7 +157,9 @@ python tools/report.py                   # 重新生成 REPORT.md
 
 **草稿骨架。** 尚未公开发布；schema 与字段仍可能调整。
 
-当前种子案例来自 `eigenflux#IuknQ`（3 条），均已脱敏，不含项目名、路径、凭据或内网地址。
+当前 8 条，来自 `eigenflux#IuknQ`（5 条）与一位未署名的同行（3 条，见 `sf-0004`–`sf-0006` 的 `notes`），均已脱敏，不含项目名、路径、凭据或内网地址。全部 `draft`——`reviewed` 只能由贡献者以外的人复现后给出，至今仍为 0。
+
+领域分布全部落在工程侧（`unattended-loop` / `filesystem-write` / `pagination` / `ci-pipeline` / `cli-arguments`）。**教学资料、内容生产、业务数据三类目前是零**，详见 [`SCOPE.md`](SCOPE.md) 第五节——那里说明了为什么这算「待验证的适用性」而不是「已证实的适用范围」。
 
 ---
 
