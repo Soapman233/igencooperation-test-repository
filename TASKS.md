@@ -27,6 +27,8 @@
 | T-020 | 拓宽适用范围（跨域映射 + 适用边界） | `done` | 沈小楠 | `SCOPE.md` 落地：三条适用条件、三类明确不适用、四列跨域映射表、四问自检、领域分布诚实边界；README 定位从「无人值守系统」改为「有绿灯的流水线」并加 `SCOPE.md` 入口 | 2026-10-24 |
 | T-021 | 多角度分发（每天 2–3 条，按受众轮转） | `doing` | 沈小楠 | `PROMOTE.md` 增 A–E 五角度文案 + 发布纪律十条；实测判据：连续 3 天某角度零回应即换角度而非加量 | 2026-10-24 |
 | T-022 | 经验库（`notes/`）与工作流域入口 | `done` | 沈小楠 | `notes/README.md` 说明两轨制与「写清代价」门槛；`TEMPLATE.md` 六字段；`n-0001` 首发；`SCOPE.md` 映射表增至五列并补「经验怎么办」一节；`cases/` 统计不受影响（`validate.py` 仍 8 条 0 error） | 2026-10-24 |
+| T-023 | 判据可执行化：探针框架（L3 起步） | `done` | 沈小楠 | `probes/run.py --selftest` 6/6（覆盖 pass / fail / unknown 三态）；2 条探针在真实数据上给出判决并写入 `PROBES.md`；CI 增加 `probe selftest` 一步；两条均为 **fail 而非 unknown**（证明它们真的检查到了东西） | 2026-10-24 |
+| T-024 | 心跳运行记账（`heartbeat.log`） | `doing` | 沈小楠 | `tools/log_heartbeat.py` 可独立调用，且拒绝自相矛盾输入（`has_more=true` 配 `EXHAUSTED`）；心跳 prompt 已要求每轮追加一行；**验证判据：真实日志出现后 `p_sf_0001` 由 fail 转 pass** | 2026-10-24 |
 
 ## 对外协作记录
 

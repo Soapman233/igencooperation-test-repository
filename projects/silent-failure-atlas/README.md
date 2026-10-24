@@ -103,11 +103,15 @@ notes/          经验库：搭建工作流的取舍与代价，不进统计
 submit/         最小提交契约：TEMPLATE / example / submission.schema.json
 schema/         JSON Schema + 字段填写指南
 ontology/       术语对照（terms.json）+ 五个核心区分
-tools/          validate.py / validate_ontology.py / report.py / privacy.py / submit.py
+probes/         判据的可执行形态：一条探针跑一条 case 的 falsifier
+tools/          validate.py / validate_ontology.py / report.py / privacy.py / submit.py / log_heartbeat.py
 SCOPE.md        适用条件、不适用边界、跨域映射表、四问自检
 crosswalk.md    与其他同类 schema 的字段映射
 REPORT.md       自动生成的统计（勿手工编辑）
+PROBES.md       自动生成的探针结果（勿手工编辑）
 ```
+
+**`falsifier` 是文字，`probes/` 是它的代码。** 一条案例要证明自己不是纸上谈兵，最低标准是有人在真实数据上跑出过它的判决。没有探针的案例仍然收，但它的 `falsifier` 还只是「一个说法」，不是一个「已执行的检查」——这个差别写在 [`PROBES.md`](PROBES.md) 里，不藏在正文。
 
 **经验也能入库，但不进案例。** 搭建自动化工作流时的选型、维护代价、什么时候会后悔——这些过不了「判据可证伪」那道门，硬塞进 `cases/` 会稀释分母。所以它们走 [`notes/`](notes/README.md)：门槛是「必须写清代价」，不进任何统计。一条经验如果能写成可证伪的判据，它应该升级成案例而不是留在那里。
 
@@ -124,9 +128,12 @@ python tools/validate.py --selftest      # 校验「校验器本身能不能抓�
 python tools/privacy.py                  # 隐私扫描（路径 / 内网 / 凭据 / 邮箱）
 python tools/validate_ontology.py        # 校验术语表
 python tools/report.py                   # 重新生成 REPORT.md
+python probes/run.py                     # 跑全部探针，重生成 PROBES.md
+python probes/run.py --selftest          # 注入缺陷，断言探针能红
+python tools/log_heartbeat.py --phases 7 # 给一次运行记一行账（心跳调用）
 ```
 
-`--selftest` 不是装饰。**一个从没被看到拒绝过任何东西的门禁，不是门禁。** 案例校验器会注入 5 类已知缺陷，术语校验器会注入 7 类，断言全部被拒绝。
+`--selftest` 不是装饰。**一个从没被看到拒绝过任何东西的门禁，不是门禁。** 案例校验器会注入 5 类已知缺陷，术语校验器会注入 7 类，探针框架会注入 3 类（含「数据源缺失必须报 unknown 而不是 pass」），断言全部被拒绝。
 
 同理，`privacy.py` 也接受反向测试：故意写一条带绝对路径的案例，它必须变红。**没试过它拦人的扫描器，等于没有扫描器。**
 
@@ -158,11 +165,24 @@ python tools/report.py                   # 重新生成 REPORT.md
 
 ## 状态
 
-**草稿骨架。** 尚未公开发布；schema 与字段仍可能调整。
+**研究预览。** schema 与字段仍可能调整。
 
 当前 8 条，来自 `eigenflux#IuknQ`（5 条）与一位未署名的同行（3 条，见 `sf-0004`–`sf-0006` 的 `notes`），均已脱敏，不含项目名、路径、凭据或内网地址。全部 `draft`——`reviewed` 只能由贡献者以外的人复现后给出，至今仍为 0。
 
 领域分布全部落在工程侧（`unattended-loop` / `filesystem-write` / `pagination` / `ci-pipeline` / `cli-arguments`）。**教学资料、内容生产、业务数据三类目前是零**，详见 [`SCOPE.md`](SCOPE.md) 第五节——那里说明了为什么这算「待验证的适用性」而不是「已证实的适用范围」。
+
+### 判据跑起来了吗
+
+8 条里 2 条已写成可执行探针，并在真实数据上跑过：
+
+| 案例 | 判决 | 证据 |
+|---|---|---|
+| `sf-0007` 分页契约 | **fail** | 54 份回执中 42 份 `has_more=true` 而 `next_cursor` 为空，退出码均为 0 |
+| `sf-0001` 运行标识 | **fail** | 心跳运行日志不存在——周期状态只存在于对话里，没有可机器校验的留痕 |
+
+**两条都红，而且都是在自己身上红的。** 这是这条路径唯一的用法：先让判据能红，才能指望它将来能绿。一个从没失败过的探针，和一个永远 `print("pass")` 的脚本没有区别。
+
+剩下 6 条的 `falsifier` 仍只是文字。**没写成探针，就不算验证过。**
 
 ---
 

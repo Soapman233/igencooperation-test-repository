@@ -52,6 +52,13 @@ jobs:
             exit 1
           fi
 
+      # 探针框架也要能被反证：在临时副本上注入缺陷，断言探针报 fail，
+      # 并断言数据源缺失时报 unknown 而不是 pass。
+      # 真实探针不在这里跑——CI 没有 EigenFlux 本地数据，跑出来全是 unknown，
+      # 那只是噪音，不是信号。真实探针由每日体检在本地跑。
+      - name: probe selftest
+        run: python probes/run.py --selftest
+
       # 改了案例却没重生成统计，CI 必须红。
       # 统计与实际不一致，比没有统计更危险。
       - name: report must be up to date
