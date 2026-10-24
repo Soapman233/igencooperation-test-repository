@@ -28,8 +28,9 @@
 | T-021 | 多角度分发（每天 2–3 条，按受众轮转） | `doing` | 沈小楠 | `PROMOTE.md` 增 A–E 五角度文案 + 发布纪律十条；实测判据：连续 3 天某角度零回应即换角度而非加量 | 2026-10-24 |
 | T-022 | 经验库（`notes/`）与工作流域入口 | `done` | 沈小楠 | `notes/README.md` 说明两轨制与「写清代价」门槛；`TEMPLATE.md` 六字段；`n-0001` 首发；`SCOPE.md` 映射表增至五列并补「经验怎么办」一节；`cases/` 统计不受影响（`validate.py` 仍 8 条 0 error） | 2026-10-24 |
 | T-023 | 判据可执行化：探针框架（L3 起步） | `done` | 沈小楠 | `probes/run.py --selftest` 6/6（覆盖 pass / fail / unknown 三态）；2 条探针在真实数据上给出判决并写入 `PROBES.md`；CI 增加 `probe selftest` 一步；两条均为 **fail 而非 unknown**（证明它们真的检查到了东西） | 2026-10-24 |
-| T-024 | 心跳运行记账（`heartbeat.log`） | `doing` | 沈小楠 | `tools/log_heartbeat.py` 可独立调用，且拒绝自相矛盾输入（`has_more=true` 配 `EXHAUSTED`）；心跳 prompt 已要求每轮追加一行；**验证判据：真实日志出现后 `p_sf_0001` 由 fail 转 pass** | 2026-10-24 |
-| T-025 | 分页应对层：补页 + 交集校验 + 账本自洽探针 | `doing` | 沈小楠 | 记账脚本拒绝「`has_more=true` 配 `EXHAUSTED`」与「只说还有更多、不说怎么处理」两类输入（均退出码 2）；`p_sf_0007b` 自检 4 用例覆盖 pass / fail / unknown 与「重放冒充补页」；**验证判据：首轮心跳后账本出现 `recovered_items>0` 且 `overlap_with_prev=0`，`p_sf_0007b` 转 pass** | 2026-10-24 |
+| T-024 | 心跳运行记账（`heartbeat.log`） | `done` | 沈小楠 | `tools/log_heartbeat.py` 可独立调用，拒绝自相矛盾输入；**已验证**：账本出现首行（`hb-20261024T1148-manual`），`p_sf_0001` 由 fail 转 **pass** | 2026-10-24 |
+| T-025 | 分页应对层：补页 + 交集校验 + 账本自洽探针 | `done` | 沈小楠 | 记账脚本拒绝「`has_more=true` 配 `EXHAUSTED`」与「只说还有更多、不说怎么处理」（均退出码 2）；`p_sf_0007b` 自检 4 用例；**已验证**：`refresh` 首页 `has_more=true`/`next_cursor=null` → `action=more` 补回 20 条、交集 0、新曝光号，`p_sf_0007b` 由 unknown 转 **pass** | 2026-10-24 |
+| T-026 | 判据自证伪：`sf-0007` 修正为「回执未自描述续取」 | `done` | 沈小楠 | 实测推翻原判据「无法续取」（`action=more` 可续取，交集 0）；`falsifies` / `falsifier` / `repro` / `notes` 已改；探针改为检查「任一续取描述字段」（`next_cursor` / `next_action` 等）；`p_sf_0007` 仍 fail（44/56）但理由已准确 | 2026-10-24 |
 
 ## 对外协作记录
 

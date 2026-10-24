@@ -16,6 +16,15 @@ import json
 import os
 import sys
 
+RESUME_HINT_FIELDS = ("next_cursor", "cursor", "next", "next_action",
+                      "next_page", "continue_action")
+
+
+def has_resume_hint(doc: dict) -> bool:
+    """True if some field lets a caller build the next request without external docs."""
+    return any(doc.get(field) for field in RESUME_HINT_FIELDS)
+
+
 def emit(verdict: str, checked: int, violations: int, detail: str, evidence: list) -> int:
     print(json.dumps({
         "case": "sf-0007",
@@ -58,13 +67,14 @@ def main() -> int:
         if not isinstance(doc, dict) or "has_more" not in doc:
             continue
         checked += 1
-        if doc.get("has_more") is True and not doc.get("next_cursor"):
+        if doc.get("has_more") is True and not has_resume_hint(doc):
             violations.append({
                 "dir": os.path.basename(os.path.dirname(path)),
                 "file": os.path.basename(path),
                 "impression_id": doc.get("impression_id"),
                 "items": len(doc.get("items") or []),
                 "next_cursor": doc.get("next_cursor"),
+                "resume_fields_present": [f for f in RESUME_HINT_FIELDS if doc.get(f)],
             })
 
     if checked == 0:
@@ -74,11 +84,12 @@ def main() -> int:
 
     ratio = f"{len(violations)}/{checked}"
     if violations:
-        detail = (f"{ratio} 份回执声明 has_more=true 但 next_cursor 为空 —— "
-                  f"调用方无法续取，且退出码为 0，账面看起来是正常结束。")
+        detail = (f"{ratio} 份回执声明 has_more=true，却没有任何字段说明怎么取下一页"
+                  f"（无游标、无续取动作）——调用方须依赖外部知识才能续取，"
+                  f"退出码仍是 0，账面看起来是正常结束。")
         return emit("fail", checked, len(violations), detail, violations)
 
-    detail = f"{ratio} 份回执中，凡 has_more=true 的都给出了非空游标。判据成立。"
+    detail = f"{ratio} 份回执中，凡 has_more=true 的都在回执内给出了续取路径。判据成立。"
     if malformed:
         detail += f"（另有 {malformed} 份文件无法解析，未计入）"
     return emit("pass", checked, 0, detail, [])
