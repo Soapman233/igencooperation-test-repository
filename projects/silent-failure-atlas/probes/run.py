@@ -158,6 +158,12 @@ def selftest() -> int:
 
     p7 = os.path.join(HERE, "p_sf_0007.py")
     p1 = os.path.join(HERE, "p_sf_0001.py")
+    p7b = os.path.join(HERE, "p_sf_0007b.py")
+
+    def ledger(path: str, *records: dict) -> None:
+        with open(path, "w", encoding="utf-8") as fh:
+            for rec in records:
+                fh.write(json.dumps(rec, ensure_ascii=False) + "\n")
 
     def feed(root: str, name: str, payload: dict) -> None:
         d = os.path.join(root, "broadcasts", "20261024")
@@ -204,6 +210,45 @@ def selftest() -> int:
                                      "run_id": "selftest-2", "phases_completed": 7}) + "\n")
             r = run_one(p1, {**env_base, "EF_HEARTBEAT_LOG": log})
             checks.append(("sf-0001 detects stale run log", r["verdict"] == "fail", r["verdict"]))
+
+    # --- sf-0007 response layer: what WE did when the upstream gave no cursor ---
+    if os.path.exists(p7b):
+        base = {"ts": int(time.time()), "run_id": "selftest-x", "phases_completed": 7}
+
+        with tempfile.TemporaryDirectory() as tmp:
+            log = os.path.join(tmp, "heartbeat.log")
+            ledger(log, {**base, "feed_items": 20, "feed_has_more": True,
+                         "pagination_verdict": "EXHAUSTED", "recovered_items": 0,
+                         "overlap_with_prev": 0})
+            r = run_one(p7b, {**env_base, "EF_HEARTBEAT_LOG": log})
+            checks.append(("sf-0007b catches 'has_more marked as exhausted'",
+                           r["verdict"] == "fail", r["verdict"]))
+
+        with tempfile.TemporaryDirectory() as tmp:
+            log = os.path.join(tmp, "heartbeat.log")
+            ledger(log, {**base, "feed_items": 20, "feed_has_more": True,
+                         "pagination_verdict": "NOT_EXHAUSTED", "recovered_items": 20,
+                         "overlap_with_prev": 0})
+            r = run_one(p7b, {**env_base, "EF_HEARTBEAT_LOG": log})
+            checks.append(("sf-0007b passes on clean recovery",
+                           r["verdict"] == "pass", r["verdict"]))
+
+        with tempfile.TemporaryDirectory() as tmp:
+            log = os.path.join(tmp, "heartbeat.log")
+            ledger(log, {**base, "feed_items": 20, "feed_has_more": True,
+                         "pagination_verdict": "NOT_EXHAUSTED", "recovered_items": 20,
+                         "overlap_with_prev": 5})
+            r = run_one(p7b, {**env_base, "EF_HEARTBEAT_LOG": log})
+            checks.append(("sf-0007b catches replay disguised as recovery",
+                           r["verdict"] == "fail", r["verdict"]))
+
+        with tempfile.TemporaryDirectory() as tmp:
+            log = os.path.join(tmp, "heartbeat.log")
+            ledger(log, {**base, "feed_items": 20, "feed_has_more": False,
+                         "pagination_verdict": "EXHAUSTED"})
+            r = run_one(p7b, {**env_base, "EF_HEARTBEAT_LOG": log})
+            checks.append(("sf-0007b reports unknown when no such cycle seen",
+                           r["verdict"] == "unknown", r["verdict"]))
 
     passed = sum(1 for _, ok, _ in checks if ok)
     for name, ok, got in checks:

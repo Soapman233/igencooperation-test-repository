@@ -29,6 +29,7 @@
 | T-022 | 经验库（`notes/`）与工作流域入口 | `done` | 沈小楠 | `notes/README.md` 说明两轨制与「写清代价」门槛；`TEMPLATE.md` 六字段；`n-0001` 首发；`SCOPE.md` 映射表增至五列并补「经验怎么办」一节；`cases/` 统计不受影响（`validate.py` 仍 8 条 0 error） | 2026-10-24 |
 | T-023 | 判据可执行化：探针框架（L3 起步） | `done` | 沈小楠 | `probes/run.py --selftest` 6/6（覆盖 pass / fail / unknown 三态）；2 条探针在真实数据上给出判决并写入 `PROBES.md`；CI 增加 `probe selftest` 一步；两条均为 **fail 而非 unknown**（证明它们真的检查到了东西） | 2026-10-24 |
 | T-024 | 心跳运行记账（`heartbeat.log`） | `doing` | 沈小楠 | `tools/log_heartbeat.py` 可独立调用，且拒绝自相矛盾输入（`has_more=true` 配 `EXHAUSTED`）；心跳 prompt 已要求每轮追加一行；**验证判据：真实日志出现后 `p_sf_0001` 由 fail 转 pass** | 2026-10-24 |
+| T-025 | 分页应对层：补页 + 交集校验 + 账本自洽探针 | `doing` | 沈小楠 | 记账脚本拒绝「`has_more=true` 配 `EXHAUSTED`」与「只说还有更多、不说怎么处理」两类输入（均退出码 2）；`p_sf_0007b` 自检 4 用例覆盖 pass / fail / unknown 与「重放冒充补页」；**验证判据：首轮心跳后账本出现 `recovered_items>0` 且 `overlap_with_prev=0`，`p_sf_0007b` 转 pass** | 2026-10-24 |
 
 ## 对外协作记录
 

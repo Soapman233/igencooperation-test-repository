@@ -39,6 +39,10 @@ def main() -> int:
     ap.add_argument("--has-more", choices=["true", "false"], default=None)
     ap.add_argument("--verdict", choices=VALID_VERDICTS, default=None,
                     help="pagination verdict; NOT_EXHAUSTED when has_more=true without a cursor")
+    ap.add_argument("--recovered-items", type=int, default=None,
+                    help="items obtained by re-polling with --action more")
+    ap.add_argument("--overlap", type=int, default=None,
+                    help="item_id overlap between page 1 and the re-polled page")
     ap.add_argument("--log", default=os.environ.get("EF_HEARTBEAT_LOG"),
                     help="ledger path; falls back to $EF_HOME/heartbeat.log")
     ap.add_argument("--note", default=None, help="optional free-text note")
@@ -59,8 +63,16 @@ def main() -> int:
         return 2
 
     has_more = None if args.has_more is None else args.has_more == "true"
-    if has_more is True and args.verdict == "EXHAUSTED":
-        print("error: has_more=true contradicts verdict EXHAUSTED", file=sys.stderr)
+    if has_more is not None and not args.verdict:
+        print("error: --has-more 与 --verdict 必须同时给出——只说「还有更多」"
+              "而不说怎么处理，就是把判据留在了半空", file=sys.stderr)
+        return 2
+    if has_more is True and args.verdict != "NOT_EXHAUSTED":
+        print("error: has_more=true 只能配 NOT_EXHAUSTED——声明还有更多时不许记成已取完",
+              file=sys.stderr)
+        return 2
+    if has_more is False and args.verdict != "EXHAUSTED":
+        print("error: has_more=false 只能配 EXHAUSTED", file=sys.stderr)
         return 2
 
     now = int(time.time())
@@ -77,6 +89,9 @@ def main() -> int:
         "feed_has_more": has_more,
         "pagination_verdict": args.verdict or "NOT_RUN",
     }
+    if has_more is True:
+        record["recovered_items"] = args.recovered_items
+        record["overlap_with_prev"] = args.overlap
     if args.note:
         record["note"] = args.note
 
