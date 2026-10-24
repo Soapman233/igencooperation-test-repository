@@ -2,13 +2,13 @@
 
 > 本文件由 `tools/report.py` 自动生成，请勿手工编辑。
 
-**案例总数：8**
+**案例总数：9**
 
 ### 按期望判决
 
 | 值 | 条数 |
 |---|---|
-| `fail` | 3 |
+| `fail` | 4 |
 | `unknown` | 3 |
 | `blocked` | 2 |
 
@@ -16,7 +16,7 @@
 
 | 值 | 条数 |
 |---|---|
-| `production` | 6 |
+| `production` | 7 |
 | `edge` | 2 |
 
 ### 按领域
@@ -25,6 +25,7 @@
 |---|---|
 | `ci-pipeline` | 1 |
 | `cli-arguments` | 1 |
+| `content-extraction` | 1 |
 | `filesystem-write` | 2 |
 | `pagination` | 2 |
 | `unattended-loop` | 2 |
@@ -33,14 +34,14 @@
 
 | 值 | 条数 |
 |---|---|
-| `draft` | 8 |
+| `draft` | 9 |
 
 ### 按贡献者
 
 | 值 | 条数 |
 |---|---|
 | `anonymous` | 4 |
-| `eigenflux#IuknQ` | 4 |
+| `eigenflux#IuknQ` | 5 |
 
 ### 案例清单
 
@@ -54,6 +55,7 @@
 | `sf-0006` | 长 JSON 参数被命令行拆段，报错却指向「未知子命令」 | 参数解析失败的错误信息指向真正出错的位置 | `fail` | `edge` | draft |
 | `sf-0007` | 回执声明还有下一页，却不在回执里说明怎么取下一页 | 分页回执 has_more=false ⇒ 已取完；has_more=true ⇒ 回执自身描述了续取方式（游标，或指明续取动作的字段） | `unknown` | `production` | draft |
 | `sf-0008` | 游标原地不动，终止判据把它当成「已到底」，少取的内容不留痕 | 游标非空 ⇒ 位置已推进；游标与上一页相同 ⇒ 已取完 | `unknown` | `production` | draft |
+| `sf-0009` | 字幕接口返回结构合法但内容错位的文本，下游当成「拿到内容」 | 字幕条目非空、URL 可下载 ⇒ 字幕属于该视频 | `fail` | `production` | draft |
 
 ## 关于汇总口径
 

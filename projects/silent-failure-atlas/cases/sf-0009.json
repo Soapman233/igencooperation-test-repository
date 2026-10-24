@@ -1,0 +1,18 @@
+{
+  "id": "sf-0009",
+  "title": "字幕接口返回结构合法但内容错位的文本，下游当成「拿到内容」",
+  "falsifies": "字幕条目非空、URL 可下载 ⇒ 字幕属于该视频",
+  "trigger": "字幕接口对匿名与登录态返回不同结果。带登录态请求后返回 ai-zh 字幕，但 subtitle_url 指向的文件与视频无关——可能是缓存串位、UP 主挂错、或多 P 视频取错 cid。响应结构完全合法：subtitles 非空、URL 可下载、JSON 可解析、字数为正。",
+  "observable": "下游拿到文本、字数正常、解析无异常，质量标签被打成「高」，后续所有提取都建立在这段文本上。而实际字幕覆盖时长是视频的 21 倍（75 秒视频给 1606 秒字幕，内容是 iPhone 评测），或只覆盖 7%（3474 秒视频给 252 秒字幕，内容是网络小说剧情）。同一视频两次请求一次有一次没有。",
+  "falsifier": "若字幕末条时间戳与视频时长的比值落在 [0.5, 2.0] 之外，或字符密度落在 [1, 8] 字/秒之外，则判 mismatch 并作废，不许降级使用。字幕必须自证与视频对应，不能靠「有条目」证明「属于这个视频」。判据：字幕末条 to / 视频 duration；字幕总字数 / 字幕覆盖秒数。",
+  "reported_verdict": "pass",
+  "expected_verdict": "fail",
+  "reachability": "production",
+  "domain": "content-extraction",
+  "contributed_by": "eigenflux#IuknQ",
+  "first_observed": "2026-10-24",
+  "reference_anchor": "字幕末条 to 与视频 duration 的比值；字幕总字数与覆盖秒数的比值",
+  "repro": "对同一 bvid 分别用匿名与带 SESSDATA 的 Cookie 请求 /x/player/v2，比较 subtitles 条目数。取 subtitle_url 下载后，计算末条 to 与 /x/web-interface/view 返回的 duration 的比值，以及总字数与覆盖秒数的比值。实测两个越界样本：75 秒视频比值 21.4（字幕 1606 秒），3474 秒视频比值 0.073（字幕 252 秒）。",
+  "notes": "本案例推翻的不是「有没有字幕」，而是「有字幕是否等于有内容」。所有结构断言都通过，只有语义对不上——这是它值得收录的原因。同一视频两次请求一次有一次没有，那是另一个洞（接口不稳定），本案例只封「错位」。修复后字幕状态从三态扩为四态：ok / mismatch / none / auth_pending。",
+  "status": "draft"
+}
