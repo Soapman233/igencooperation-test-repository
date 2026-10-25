@@ -78,10 +78,112 @@ def empty_guard(rows: list, ran: bool) -> str:
     return "has_data"
 
 
+def side_effect_guard(return_value: str, artifact_exists: bool) -> str:
+    """SF-0002 描述的判据：工具返回成功就认为操作完成。"""
+    return "done" if return_value == "ok" else "failed"
+
+
+def liveness_guard(process_alive: bool, last_output_age_s: float, threshold_s: float) -> str:
+    """SF-0003 描述的判据：进程还活着就认为任务正常。"""
+    if not process_alive:
+        return "dead"
+    return "healthy"          # ← 洞在这里：不管多久没输出都算健康
+
+
+def version_guard(exit_code: int, version_before: int, version_after: int) -> str:
+    """SF-0004 描述的判据：退出码 0 就认为已是最新。"""
+    if exit_code != 0:
+        return "failed"
+    return "up_to_date"       # ← 洞在这里：版本没前进也算最新
+
+
+def manifest_guard(installer_ok: bool, unmanaged_before: set, unmanaged_after: set) -> str:
+    """SF-0005 描述的判据：安装器报成功且版本正确就认为安装完整。"""
+    if not installer_ok:
+        return "failed"
+    return "complete"         # ← 洞在这里：不比对未托管条目
+
+
+def parse_error_guard(error_msg: str, received_segments: int) -> str:
+    """SF-0006 描述的判据：错误信息指向真实出错位置。"""
+    if "unknown subcommand" in error_msg:
+        return "misleading"   # ← 洞在这里：只报第一个未知项，不说收到几段
+    return "helpful"
+
+
+def cursor_advance_guard(cursor, prev_cursor, has_more: bool) -> str:
+    """SF-0008 描述的判据：游标非空就认为位置已推进。"""
+    if not has_more:
+        return "done"
+    if cursor is None:
+        return "done"
+    return "more"             # ← 洞在这里：游标原地不动也当推进
+
+
 # ---------------------------------------------------------------- 案例定义
 
 
 CASES = {
+    "SF-0002": {
+        "title": "工具报告成功，但副作用没有发生",
+        "claim": "工具返回成功就表示操作完成了",
+        "run": lambda: {
+            "verdict": side_effect_guard("ok", artifact_exists=False),
+            "input": "工具返回 ok，但目标文件不存在",
+            "hole": "只信返回值，不核对产物",
+        },
+        "reproduced_if": "done",
+    },
+    "SF-0003": {
+        "title": "依赖人工交互的代码路径，不会失败，而是永久阻塞",
+        "claim": "进程还活着就表示任务正常",
+        "run": lambda: {
+            "verdict": liveness_guard(process_alive=True, last_output_age_s=3600, threshold_s=60),
+            "input": "进程存活，但已 3600 秒没有新输出（阈值 60 秒）",
+            "hole": "没有超时判据，等多久都算健康",
+        },
+        "reproduced_if": "healthy",
+    },
+    "SF-0004": {
+        "title": "同步因版本门被静默跳过，技能冻结三十天无人发现",
+        "claim": "退出码 0 就表示已是最新",
+        "run": lambda: {
+            "verdict": version_guard(exit_code=0, version_before=3, version_after=3),
+            "input": "退出码 0，版本号 3 → 3（没有前进）",
+            "hole": "版本没变也算「已是最新」",
+        },
+        "reproduced_if": "up_to_date",
+    },
+    "SF-0005": {
+        "title": "原子替换把未托管的 junction 一并清掉，安装器仍报成功",
+        "claim": "安装器报成功且版本正确就表示安装完整",
+        "run": lambda: {
+            "verdict": manifest_guard(True, {"custom-junction"}, set()),
+            "input": "安装器报成功；升级前有 1 个未托管条目，升级后为 0",
+            "hole": "不比对未托管条目的集合",
+        },
+        "reproduced_if": "complete",
+    },
+    "SF-0006": {
+        "title": "长 JSON 参数被命令行拆段，报错却指向「未知子命令」",
+        "claim": "错误信息指向真正出错的位置",
+        "run": lambda: {
+            "verdict": parse_error_guard("error: unknown subcommand 'name'", received_segments=7),
+            "input": "长 JSON 被拆成 7 段，错误只说「未知子命令」",
+            "hole": "不报「收到 7 段」，无法区分「写错」与「被拆」",
+        },
+        "reproduced_if": "misleading",
+    },
+    "SF-0008": {
+        "title": "游标原地不动，终止判据把它当成「已到底」",
+        "claim": "游标非空就表示位置已推进",
+        "run": lambda: {
+            "verdict": cursor_advance_guard("pos-5", "pos-5", True),
+            "input": "两轮游标都是 'pos-5'，has_more=true",
+            "hole": "游标原地不动也当推进，循环取同一段",
+        },
+        "reproduced_if": "more",
+    },
     "SF-0009": {
         "title": "字幕接口返回结构合法但内容错位的文本",
         "claim": "用时长比例就能判断字幕是否属于这个视频",
