@@ -13,3 +13,4 @@
 | 2026-10-23 | A-1 | ok | 案例 3 条、0 error、`--selftest` 6/6；有提交（仅本行） |
 | 2026-10-24 | A-1 | ok | 案例 8 条、0 error、`--selftest` 6/6；有提交（仅本行） |
 | 2026-10-25 | A-1 | ok | 案例 9 条、0 error、`--selftest` 6/6；探针 2 pass / 1 fail / 0 unknown（fail 为 EigenFlux 回执缺续取字段，属被测系统违规，非体检失败）；有提交 |
+| 2026-10-26 | A-1 | ok | 案例 9 条、0 error、`--selftest` 6/6；探针 1 pass / 2 fail / 0 unknown（新增 sf-0001 心跳陈旧 9.4h，另一为 sf-0007 回执缺续取字段，均属被测系统违规，非体检失败）；有提交 |
