@@ -179,7 +179,7 @@ python tools/log_heartbeat.py --phases 7 # 给一次运行记一行账（心跳�
 |---|---|---|---|
 | `p_sf_0007` | 上游契约 | **fail** | 56 份回执中 44 份 `has_more=true` 却没有任何续取字段，退出码均为 0 |
 | `p_sf_0001` | 我们的记账 | **pass** | 账本有记录，带 `run_id`，1 分钟内 |
-| `p_sf_0007b` | 我们的应对 | **pass** | 1 个 `has_more=true` 周期如实记 `NOT_EXHAUSTED`，补回 20 条，重合 0 |
+| `p_sf_0007b` | 我们的应对 | **pass** | 截至 2026-10-26 16:40，16 个 `has_more=true` 周期全部如实记账（`CURSOR_PROTOCOL_VIOLATION` 0 个），累计补回 291 条，重合 0 |
 
 **上游层的红不是「没修好」，是「上游违约」。** 它不会因为本仓库改代码而下降，拿它当改进指标是错的。可修的只有应对层——`p_sf_0007b` 才是那个指标。详见 [`probes/README.md`](probes/README.md)。
 

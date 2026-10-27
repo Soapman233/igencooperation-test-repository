@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""falsifier: 声明还有下一页却拿不到游标时，必须记 NOT_EXHAUSTED 并留下补页结果，
-不许记成已取完，也不许静默跳过。
+"""falsifier: 声明还有下一页却拿不到游标时，必须记 NOT_EXHAUSTED（或更精确的
+CURSOR_PROTOCOL_VIOLATION）并留下补页结果，不许记成已取完，也不许静默跳过。
 
 Case: sf-0007 — 回执声明还有下一页却不给游标（**应对层**）
 
@@ -62,6 +62,9 @@ def main() -> int:
     relevant = 0
     violations = []
     recovered_total = 0
+    # 两种合法记法分开计数：把「契约自相矛盾」与「本轮没读全」混成一个数，
+    # 就又会得到一条看起来健康、实际把违约吸收掉的曲线。
+    state_counts = {"NOT_EXHAUSTED": 0, "CURSOR_PROTOCOL_VIOLATION": 0}
 
     for idx, line in enumerate(lines, 1):
         try:
@@ -73,9 +76,12 @@ def main() -> int:
         relevant += 1
         problems = []
 
-        if rec.get("pagination_verdict") != "NOT_EXHAUSTED":
-            problems.append(f"pagination_verdict={rec.get('pagination_verdict')!r}，"
-                            f"应为 'NOT_EXHAUSTED'")
+        verdict = rec.get("pagination_verdict")
+        if verdict in state_counts:
+            state_counts[verdict] += 1
+        else:
+            problems.append(f"pagination_verdict={verdict!r}，"
+                            f"应为 'NOT_EXHAUSTED' 或 'CURSOR_PROTOCOL_VIOLATION'")
 
         recovered = rec.get("recovered_items")
         if not isinstance(recovered, int):
@@ -103,7 +109,9 @@ def main() -> int:
                     f"{relevant} 个 has_more=true 的周期中 {len(violations)} 个应对不当——"
                     f"要么记成了已取完，要么补了页却没验证是不是重放。", violations)
 
-    detail = (f"{relevant} 个 has_more=true 的周期全部如实记为 NOT_EXHAUSTED，"
+    detail = (f"{relevant} 个 has_more=true 的周期全部如实记账"
+              f"（NOT_EXHAUSTED {state_counts['NOT_EXHAUSTED']} 个 / "
+              f"CURSOR_PROTOCOL_VIOLATION {state_counts['CURSOR_PROTOCOL_VIOLATION']} 个），"
               f"累计补回 {recovered_total} 条，重合均为 0。判据成立。")
     return emit("pass", relevant, 0, detail, [])
 
