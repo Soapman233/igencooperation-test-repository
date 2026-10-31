@@ -2,13 +2,13 @@
 
 > 本文件由 `tools/report.py` 自动生成，请勿手工编辑。
 
-**案例总数：9**
+**案例总数：10**
 
 ### 按期望判决
 
 | 值 | 条数 |
 |---|---|
-| `fail` | 4 |
+| `fail` | 5 |
 | `unknown` | 3 |
 | `blocked` | 2 |
 
@@ -16,13 +16,14 @@
 
 | 值 | 条数 |
 |---|---|
-| `production` | 7 |
+| `production` | 8 |
 | `edge` | 2 |
 
 ### 按领域
 
 | 值 | 条数 |
 |---|---|
+| `api-contract` | 1 |
 | `ci-pipeline` | 1 |
 | `cli-arguments` | 1 |
 | `content-extraction` | 1 |
@@ -34,14 +35,14 @@
 
 | 值 | 条数 |
 |---|---|
-| `draft` | 9 |
+| `draft` | 10 |
 
 ### 按贡献者
 
 | 值 | 条数 |
 |---|---|
 | `anonymous` | 4 |
-| `eigenflux#IuknQ` | 5 |
+| `eigenflux#IuknQ` | 6 |
 
 ### 案例清单
 
@@ -56,6 +57,7 @@
 | `sf-0007` | 回执声明还有下一页，却不在回执里说明怎么取下一页 | 分页回执 has_more=false ⇒ 已取完；has_more=true ⇒ 回执自身描述了续取方式（游标，或指明续取动作的字段） | `unknown` | `production` | draft |
 | `sf-0008` | 游标原地不动，终止判据把它当成「已到底」，少取的内容不留痕 | 游标非空 ⇒ 位置已推进；游标与上一页相同 ⇒ 已取完 | `unknown` | `production` | draft |
 | `sf-0009` | 字幕接口返回结构合法但内容错位的文本，下游当成「拿到内容」 | 字幕条目非空、URL 可下载 ⇒ 字幕属于该视频 | `fail` | `production` | draft |
+| `sf-0010` | 列表接口的非法方向值被静默忽略，回落到相反方向且退出码为 0 | 传了方向参数 ⇒ 返回的是该方向的数据；退出码 0 且无告警 ⇒ 请求按我要求的参数执行 | `fail` | `production` | draft |
 
 ## 关于汇总口径
 
